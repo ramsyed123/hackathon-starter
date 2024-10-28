@@ -36,7 +36,7 @@ jobs:
           AWS_REGION: 'us-east-1'  # Set your region here
         run: |
           echo "Authenticating Docker with ECR..."
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.$AWS_REGION.amazonaws.com
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com
 
 
       - name: Push Docker Image to ECR
@@ -46,8 +46,8 @@ jobs:
           AWS_REGION: 'us-east-1'
         run: |
           $(aws ecr get-login --no-include-email --region $AWS_REGION)
-          docker tag node-js-app:latest <your-aws-account-id>.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
-          docker push <your-aws-account-id>.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
+          docker tag node-js-app:latest 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
+          docker push 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
 
   deploy:
     needs: build
