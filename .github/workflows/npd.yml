@@ -84,3 +84,5 @@ jobs:
           aws eks --region us-west-2 update-kubeconfig --name <your-cluster-name>
           echo "Applying Kubernetes deployment..."
           kubectl apply -f kubernetes-deployment.yml
+          kubectl get pods
+
