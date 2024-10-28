@@ -38,6 +38,16 @@ jobs:
           echo "Authenticating Docker with ECR..."
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com
 
+      - name: Create ECR Repository
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
+        run: |
+          echo "Creating ECR repository if it does not exist..."
+          aws ecr create-repository --repository-name node-js-app --region $AWS_REGION || echo "Repository already exists"
+  
+
       - name: Tag and Push Docker Image to ECR
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
