@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Docker Image
         run: docker build -t node-js-app .
-      
+
       - name: Authenticate Docker with ECR
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -38,14 +38,13 @@ jobs:
           echo "Authenticating Docker with ECR..."
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com
 
-
-      - name: Push Docker Image to ECR
+      - name: Tag and Push Docker Image to ECR
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'us-east-1'
         run: |
-          $(aws ecr get-login --no-include-email --region $AWS_REGION)
+          echo "Tagging and pushing Docker image..."
           docker tag node-js-app:latest 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
           docker push 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
 
@@ -59,7 +58,19 @@ jobs:
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
 
+      - name: Configure AWS Credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Configuring AWS credentials..."
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region us-west-2  # Change to your desired region
+
       - name: Deploy to EKS
         run: |
+          echo "Updating kubeconfig..."
           aws eks --region us-west-2 update-kubeconfig --name <your-cluster-name>
+          echo "Applying Kubernetes deployment..."
           kubectl apply -f kubernetes-deployment.yml
