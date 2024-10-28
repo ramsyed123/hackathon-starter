@@ -1,18 +1,18 @@
-FROM node:20-slim
+# Use the official Node.js image.
+FROM node:14
 
-WORKDIR /starter
-ENV NODE_ENV development
+# Create and set the working directory.
+WORKDIR /usr/src/app
 
-COPY .env.example /starter/.env.example
-COPY . /starter
+# Copy the package.json and install dependencies.
+COPY package*.json ./
+RUN npm install
 
-RUN npm install pm2 -g
-RUN if [ "$NODE_ENV" = "production" ]; then \
-    npm install --omit=dev; \
-    else \
-    npm install; \
-    fi
+# Copy the rest of the application code.
+COPY . .
 
-CMD ["pm2-runtime","app.js"]
+# Expose the application on port 3000.
+EXPOSE 3000
 
-EXPOSE 8080
+# Start the application.
+CMD ["npm", "start"]
