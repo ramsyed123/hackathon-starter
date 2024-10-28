@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: hackathon-starter
-          image: 590183766587.dkr.ecr.us-east-1.amazonaws.com/node-js-app:latest
+          image: 590183766587.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
           ports:
             - containerPort: 3000
 ---
