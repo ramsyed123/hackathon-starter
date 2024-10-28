@@ -28,12 +28,22 @@ jobs:
 
       - name: Build Docker Image
         run: docker build -t node-js-app .
+      
+      - name: Authenticate Docker with ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'  # Set your region here
+        run: |
+          echo "Authenticating Docker with ECR..."
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.$AWS_REGION.amazonaws.com
+
 
       - name: Push Docker Image to ECR
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-west-2'
+          AWS_REGION: 'us-east-1'
         run: |
           $(aws ecr get-login --no-include-email --region $AWS_REGION)
           docker tag node-js-app:latest <your-aws-account-id>.dkr.ecr.$AWS_REGION.amazonaws.com/node-js-app:latest
